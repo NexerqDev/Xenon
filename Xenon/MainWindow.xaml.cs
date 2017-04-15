@@ -190,6 +190,7 @@ namespace Xenon
 
         private Regex errorRegex = new Regex(@"name=""ErrorCode"" value=""(\d+)""\/>.*name=""ErrorMessage"" value=""(.*?)""\/>");
         private Regex tokenRegex = new Regex(@"name=""NewPassport"" value=""(.*?)""\/>");
+        private Regex authServerRegex = new Regex(@":auth(\d+):");
         private async Task getLaunchData()
         {
             // getting passport cookie to be able to get the launch token
@@ -207,9 +208,10 @@ namespace Xenon
 
             // getting final launch token.
             // now it JUST uses cookies.
+            string authServerNum = authServerRegex.Match(passportToken).Groups[1].Value;
             req = new HttpRequestMessage()
             {
-                RequestUri = new Uri("http://auth01.nexon.net/ajax/default.aspx?_vb=UpdateSession"),
+                RequestUri = new Uri($"http://auth{authServerNum}.nexon.net/ajax/default.aspx?_vb=UpdateSession"),
                 Method = HttpMethod.Post,
                 Content = new StringContent("", Encoding.UTF8, "application/x-www-form-urlencoded")
             };

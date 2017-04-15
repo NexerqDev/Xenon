@@ -20,6 +20,7 @@
             <Label Content="p:" HorizontalAlignment="Left" Height="35" Margin="0,21,0,0" VerticalAlignment="Top" Width="22" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="#BFDCDCDC"/>
             <PasswordBox x:Name="passwordPasswordBox" HorizontalAlignment="Left" Height="19" Margin="27,32,0,0" VerticalAlignment="Top" Width="183" Background="#7FFFFFFF" TabIndex="1"/>
             <Button x:Name="playButton" Content="login + play" HorizontalAlignment="Left" Height="44" Margin="215,7,-20,0" VerticalAlignment="Top" Width="101" Click="Button_Click" Background="#BFFFFFFF" IsDefault="True" TabIndex="2"/>
+            <CheckBox x:Name="rememberUsernameCheckbox" Content="Remember username" HorizontalAlignment="Left" Height="16" Margin="92,56,0,0" VerticalAlignment="Top" Width="135" Foreground="White" Background="#A5FFFFFF"/>
 
         </Grid>
         <Label x:Name="statusLabel" Content="" HorizontalAlignment="Left" Height="29" Margin="0,190,0,0" VerticalAlignment="Center" Width="532" HorizontalContentAlignment="Center" Foreground="White"/>

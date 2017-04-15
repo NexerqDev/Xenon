@@ -52,7 +52,16 @@ namespace Xenon
             };
             httpClient = new HttpClient(httpHandler);
 
-            usernameTextBox.Focus();
+            if (!String.IsNullOrEmpty(Properties.Settings.Default.username))
+            {
+                usernameTextBox.Text = Properties.Settings.Default.username;
+                rememberUsernameCheckbox.IsChecked = true;
+                passwordPasswordBox.Focus();
+            }
+            else
+            {
+                usernameTextBox.Focus();
+            }
         }
 
         private void checkIfMapleExists()
@@ -88,6 +97,13 @@ namespace Xenon
 
                 launchGame();
                 statusLabel.Content = $"game launched! - thanks for using xenon!";
+
+                if ((bool)rememberUsernameCheckbox.IsChecked)
+                    Properties.Settings.Default.username = usernameTextBox.Text;
+                else
+                    Properties.Settings.Default.username = "";
+
+                Properties.Settings.Default.Save();
 
                 await Task.Delay(1500);
                 Application.Current.Shutdown();

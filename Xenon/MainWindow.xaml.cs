@@ -25,7 +25,7 @@ namespace Xenon
     /// </summary>
     public partial class MainWindow : Window
     {
-        public static string AppDirectory = System.AppDomain.CurrentDomain.BaseDirectory;
+        public static string AppDirectory = Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "appdata");
         public static string MaplePath = Path.Combine(AppDirectory, "MapleStory.exe");
 
         private HttpClient httpClient;
@@ -59,7 +59,7 @@ namespace Xenon
         {
             if (!File.Exists(MaplePath))
             {
-                MessageBox.Show("MapleStory.exe was not found. Are you sure you put Xenon into the MapleStory folder? Ensure it is in the \"appdata\" folder that Nexon Launcher creates.", "Xenon", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("MapleStory.exe was not found. Are you sure you put Xenon into the MapleStory folder? Ensure it is NOT in the \"appdata\" folder that Nexon Launcher creates, but one step above that (by default it should be called \"maplestory\".", "Xenon", MessageBoxButton.OK, MessageBoxImage.Warning);
                 Application.Current.Shutdown();
             }
         }

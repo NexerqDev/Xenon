@@ -43,6 +43,7 @@ namespace Xenon
             MaplePath = @"C:\Nexon\Library\maplestory\appdata\MapleStory.exe";
 #endif
 
+            checkNexonLauncher();
             checkIfMapleExists();
 
             var httpHandler = new HttpClientHandler()
@@ -64,12 +65,21 @@ namespace Xenon
             }
         }
 
+        private void checkNexonLauncher()
+        {
+            if (Process.GetProcessesByName("nexon_runtime").Length < 1)
+            {
+                MessageBox.Show("The Nexon Launcher runtime does not seem to be running on your computer. Please ensure it is running and logged in to ANY Nexon account.", "Xenon", MessageBoxButton.OK, MessageBoxImage.Warning);
+                Close();
+            }
+        }
+
         private void checkIfMapleExists()
         {
             if (!File.Exists(MaplePath))
             {
                 MessageBox.Show("MapleStory.exe was not found. Are you sure you put Xenon into the MapleStory folder? Ensure it is NOT in the \"appdata\" folder that Nexon Launcher creates, but one step above that (by default it should be called \"maplestory\".", "Xenon", MessageBoxButton.OK, MessageBoxImage.Warning);
-                Application.Current.Shutdown();
+                Close();
             }
         }
 
@@ -106,7 +116,7 @@ namespace Xenon
                 Properties.Settings.Default.Save();
 
                 await Task.Delay(1500);
-                Application.Current.Shutdown();
+                Close();
 #if !DEBUG
             }
             catch (Exception ex)

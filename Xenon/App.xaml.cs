@@ -24,7 +24,7 @@ namespace Xenon
             mutex = new Mutex(true, "NexerqDev.Xenon-MapleLAUNCHER");
             if (mutex.WaitOne(TimeSpan.Zero, true))
             {
-                if (args[0] == "-compat")
+                if (args.Length > 0 && args[0] == "-compat")
                 {
                     if (!(new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator)))
                     {

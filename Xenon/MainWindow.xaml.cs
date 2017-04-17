@@ -39,8 +39,11 @@ namespace Xenon
             InitializeComponent();
 #if DEBUG
             // for debugging - dont have to move to the folder or w/e
-            AppDirectory = @"C:\Nexon\Library\maplestory\appdata";
-            MaplePath = @"C:\Nexon\Library\maplestory\appdata\MapleStory.exe";
+            AppDirectory = Microsoft.Win32.RegistryKey
+                .OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, Microsoft.Win32.RegistryView.Registry32)
+                .OpenSubKey(@"SOFTWARE\Wizet\MapleStory", false)
+                .GetValue("ExecPath").ToString();
+            MaplePath = Path.Combine(AppDirectory, "MapleStory.exe");
 #endif
 
             checkNexonLauncher();

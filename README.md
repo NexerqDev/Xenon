@@ -10,7 +10,6 @@ A sort-of replacement for GameLauncher.exe. (GMS MapleStory)
 
 ## Caveats
 
-* Must have Nexon Launcher open and logged in to any account (doesn't have to be the one used with Xenon) - highprio right now, trying to get it fixed without this.
 * Cannot patch the game at the moment (highly doubt this will be implemented, just too much work - go use Nexon Launcher tbh. Xenon really is designed to be used to just quickly switch accounts like last time)
 
 

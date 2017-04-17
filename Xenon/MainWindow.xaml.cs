@@ -46,7 +46,7 @@ namespace Xenon
             MaplePath = Path.Combine(AppDirectory, "MapleStory.exe");
 #endif
 
-            checkNexonLauncher();
+            //checkNexonLauncher();
             checkIfMapleExists();
 
             var httpHandler = new HttpClientHandler()
@@ -259,7 +259,7 @@ namespace Xenon
             ProcessStartInfo startInfo = new ProcessStartInfo()
             {
                 FileName = MaplePath,
-                Arguments = $"-nxl {mapleLaunchToken}",
+                Arguments = $"WebStart {mapleLaunchToken}",
                 WorkingDirectory = AppDirectory
             };
 

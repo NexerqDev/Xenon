@@ -46,7 +46,6 @@ namespace Xenon
             MaplePath = Path.Combine(AppDirectory, "MapleStory.exe");
 #endif
 
-            //checkNexonLauncher();
             checkIfMapleExists();
 
             var httpHandler = new HttpClientHandler()
@@ -65,15 +64,6 @@ namespace Xenon
             else
             {
                 usernameTextBox.Focus();
-            }
-        }
-
-        private void checkNexonLauncher()
-        {
-            if (Process.GetProcessesByName("nexon_runtime").Length < 1)
-            {
-                MessageBox.Show("The Nexon Launcher runtime does not seem to be running on your computer. Please ensure it is running and logged in to ANY Nexon account.", "Xenon", MessageBoxButton.OK, MessageBoxImage.Warning);
-                Close();
             }
         }
 
@@ -260,7 +250,8 @@ namespace Xenon
             {
                 FileName = MaplePath,
                 Arguments = $"WebStart {mapleLaunchToken}",
-                WorkingDirectory = AppDirectory
+                WorkingDirectory = AppDirectory,
+                UseShellExecute = !App.CompatFlag
             };
 
             Process.Start(startInfo);

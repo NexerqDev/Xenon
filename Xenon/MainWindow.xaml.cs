@@ -12,8 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.IO;
-using System.Net.Http;
 using System.Net;
+using System.Net.Http;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
@@ -108,7 +108,7 @@ namespace Xenon
 
                 Properties.Settings.Default.Save();
 
-                await Task.Delay(1500);
+                await TaskEx.Delay(1500);
                 Close();
 #if !DEBUG
             }

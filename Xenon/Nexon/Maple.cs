@@ -15,8 +15,11 @@ namespace Xenon.Nexon
     {
         public static string MaplePath = Path.Combine(Util.AppDirectory, "MapleStory.exe");
 
-        public static bool GameExists()
+        public static bool GameExists
             => File.Exists(MaplePath);
+
+        public static bool GameRunning
+            => Process.GetProcessesByName("MapleStory").Length > 0;
 
         private static string launchToken;
 

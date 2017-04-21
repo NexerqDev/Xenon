@@ -22,8 +22,9 @@ namespace Xenon
         public MainWindow()
         {
             InitializeComponent();
-            
+
             checkIfMapleExists();
+            checkMapleProcess();
 
             if (!String.IsNullOrEmpty(Properties.Settings.Default.username))
             {
@@ -45,10 +46,20 @@ namespace Xenon
 
         private void checkIfMapleExists()
         {
-            if (!Nexon.Maple.GameExists())
+            if (!Nexon.Maple.GameExists)
             {
                 MessageBox.Show("MapleStory.exe was not found. Are you sure you put Xenon into the MapleStory folder? Ensure it is NOT in the \"appdata\" folder that Nexon Launcher creates, but one step above that (by default it should be called \"maplestory\".", "Xenon", MessageBoxButton.OK, MessageBoxImage.Warning);
                 Close();
+            }
+        }
+
+        private void checkMapleProcess()
+        {
+            if (Nexon.Maple.GameRunning)
+            {
+                MessageBoxResult mbr = MessageBox.Show("MapleStory seems to be running on your computer. Please note that Xenon cannot be used to multi-client, and is rather only a launcher replacement! Continue anyway?", "Xenon", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                if (mbr == MessageBoxResult.No)
+                    Close();
             }
         }
 

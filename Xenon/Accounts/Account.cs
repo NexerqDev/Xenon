@@ -12,7 +12,7 @@ namespace Xenon.Accounts
     public class Account : INotifyPropertyChanged
     {
         private string _username;
-        private string _password;
+        private string _token;
         private string _friendlyName = null;
 
         [JsonProperty("username")]
@@ -27,12 +27,12 @@ namespace Xenon.Accounts
         }
 
         [JsonProperty("token")]
-        public string Password
+        public string Token
         {
-            get { return _password; }
+            get { return _token; }
             set
             {
-                _password = value;
+                _token = value;
                 NotifyPropertyChanged();
             }
         }
@@ -53,13 +53,14 @@ namespace Xenon.Accounts
         public string DisplayName
             => (_friendlyName != null) ? _friendlyName : _username;
 
-        public Account(string username, string password, string friendlyName = null, bool passwordAlreadyHashed = false)
+        public Account() { }
+        public Account(string username, string passwordOrToken, string friendlyName = null, bool isToken = false)
         {
             this.Username = username;
-            this.Password =
-                passwordAlreadyHashed
-                    ? password
-                    : Nexon.Auth.HashHexPassword(password);
+            this.Token =
+                isToken
+                    ? passwordOrToken
+                    : Nexon.Auth.HashHexPassword(passwordOrToken);
 
             this.FriendlyName = friendlyName;
         }

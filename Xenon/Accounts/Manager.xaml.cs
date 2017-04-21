@@ -33,6 +33,7 @@ namespace Xenon.Accounts
             _mw = mw;
 
             List<Account> _accounts = JsonConvert.DeserializeObject<List<Account>>(Properties.Settings.Default.savedAccounts);
+
             accounts = new ObservableCollection<Account>(_accounts);
             listBox.ItemsSource = accounts;
 

@@ -129,23 +129,20 @@ namespace Xenon
 #endif
         }
 
-        private string encodeB64(string str) => Convert.ToBase64String(Encoding.UTF8.GetBytes(str));
-
         private async Task performLogin(string username, string password)
         {
             var req = new HttpRequestMessage()
             {
-                RequestUri = new Uri("https://api.nexon.net/auth/login"),
+                RequestUri = new Uri("https://accounts.nexon.net/account/login/launcher"),
                 Method = HttpMethod.Post,
-                Content = new StringContent($"{{\"allow_unverified\":true,\"user_id\":\"{username}\",\"user_pw\":\"{password}\"}}", Encoding.UTF8, "application/json")
+                Content = new StringContent($"{{\"id\":\"{username}\",\"password\":\"{Nexon.Auth.HashHexPassword(password)}\",\"auto_login\":false,\"client_id\":\"{Nexon.Auth.CLIENT_ID}\",\"scope\":\"{Nexon.Auth.SCOPE}\",\"device_id\":\"{Nexon.Auth.DeviceId}\"}}", Encoding.UTF8, "application/json")
             };
             req.Headers.Add("User-Agent", "NexonLauncher node-webkit/0.14.6 (Windows NT 10.0; WOW64) WebKit/537.36 (@c26c0312e940221c424c2730ef72be2c69ac1b67) nexon_client");
-            req.Headers.Add("Authorization", "Basic " + encodeB64($"{username.Replace("@", "%40")}:{password}")); // nexon launcher does this, it uriencodes to %40 which is weird but meh
 
             HttpResponseMessage res = await httpClient.SendAsync(req);
             dynamic json = await parseResponseJson(res);
 
-            nexonToken = json["token"];
+            nexonToken = json["access_token"];
             cookieContainer.Add(new Cookie("nxtk", nexonToken, "/", ".nexon.net")); // this cookie is used in all future requests
         }
 
@@ -162,7 +159,7 @@ namespace Xenon
             {
                 var req = new HttpRequestMessage()
                 {
-                    RequestUri = new Uri("https://api.nexon.net/products/10100"),
+                    RequestUri = new Uri("https://api.nexon.io/products/10100"),
                     Method = HttpMethod.Get
                 };
                 addNexonLauncherData(req); // bearer auth + UA
@@ -199,7 +196,7 @@ namespace Xenon
             // getting passport cookie to be able to get the launch token
             var req = new HttpRequestMessage()
             {
-                RequestUri = new Uri("https://api.nexon.net/users/me/passport"),
+                RequestUri = new Uri("https://api.nexon.io/users/me/passport"),
                 Method = HttpMethod.Get
             };
             addNexonLauncherData(req);
@@ -261,6 +258,10 @@ namespace Xenon
         {
             // include err checking here
             dynamic json = JObject.Parse(await res.Content.ReadAsStringAsync());
+
+            if (!res.IsSuccessStatusCode)
+                throw new Exception($"Nexon {res.StatusCode} error: \n\n{json["message"]} [{json["code"]}]");
+
             if (json["error"] != null)
                 throw new Exception($"Nexon error: \n\n{json["error"]["message"]} [{json["error"]["code"]}]");
 
@@ -269,8 +270,8 @@ namespace Xenon
 
         private void addNexonLauncherData(HttpRequestMessage req)
         {
-            req.Headers.Add("User-Agent", "NexonLauncher.nxl-17.02.03-219-5e3143f");
-            req.Headers.Add("Authorization", "bearer " + encodeB64(nexonToken)); // this + cookie is used for auth here.
+            req.Headers.Add("User-Agent", "NexonLauncher.nxl-17.03.02-275-220ecfb");
+            req.Headers.Add("Authorization", "bearer " + Util.EncodeB64(nexonToken)); // this + cookie is used for auth here.
         }
 
         private void returnNoError()

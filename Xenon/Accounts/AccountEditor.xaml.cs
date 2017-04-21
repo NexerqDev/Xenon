@@ -26,7 +26,17 @@ namespace Xenon.Accounts
             InitializeComponent();
 
             if (account != null)
+            {
                 usernameTextBox.Text = account.Username;
+                if (account.FriendlyName != null)
+                    friendlyNameTextBox.Text = account.FriendlyName;
+
+                passwordPasswordBox.Focus();
+            }
+            else
+            {
+                usernameTextBox.Focus();
+            }
 
             EditedAccount = null;
         }
@@ -42,7 +52,12 @@ namespace Xenon.Accounts
                 return;
             }
 
-            EditedAccount = new Account(username, password);
+            string friendlyName =
+                String.IsNullOrEmpty(friendlyNameTextBox.Text)
+                ? null
+                : friendlyNameTextBox.Text;
+
+            EditedAccount = new Account(username, password, friendlyName);
             Close();
         }
     }

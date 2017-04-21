@@ -79,7 +79,7 @@ namespace Xenon.Accounts
             }
 
             var account = (Account)listBox.SelectedItem;
-            MessageBoxResult mbr = MessageBox.Show($"Are you sure you wish to remove the account '{account.Username}'?", "Xenon", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            MessageBoxResult mbr = MessageBox.Show($"Are you sure you wish to remove the account '{account.DisplayName}'{(account.FriendlyName != null ? $" ({account.Username})" : "")}?", "Xenon", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (mbr == MessageBoxResult.Yes)
             {
                 accounts.Remove(account);
@@ -95,15 +95,13 @@ namespace Xenon.Accounts
                 return;
             }
 
-            var account = accounts.FirstOrDefault(a => a == (Account)listBox.SelectedItem);
+            var account = (Account)listBox.SelectedItem;
             var editor = new AccountEditor(account);
             editor.ShowDialog();
 
             if (editor.EditedAccount != null)
             {
-                account.Username = editor.EditedAccount.Username;
-                account.Password = editor.EditedAccount.Password;
-
+                accounts[accounts.IndexOf(account)] = editor.EditedAccount;
                 saveAccounts();
             }
         }

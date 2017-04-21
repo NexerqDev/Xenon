@@ -5,13 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Xenon.Accounts"
         mc:Ignorable="d"
-        Title="Xenon - Account Editor" Height="217.081" Width="464.908" Icon="/Xenon;component/xenon.ico" Topmost="True" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" ResizeMode="NoResize" Background="#C64E4E4E">
+        Title="Xenon - Account Editor" Height="255.28" Width="464.908" Icon="/Xenon;component/xenon.ico" Topmost="True" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" ResizeMode="NoResize" Background="#C64E4E4E">
     <Grid>
-        <Button x:Name="saveButton" Content="Save" HorizontalAlignment="Left" Height="27" Margin="166,141,0,0" VerticalAlignment="Top" Width="136" Click="saveButton_Click"/>
+        <Button x:Name="saveButton" Content="Save" HorizontalAlignment="Left" Height="27" Margin="166,179,0,0" VerticalAlignment="Top" Width="136" Click="saveButton_Click" IsDefault="True"/>
         <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Height="59" Margin="10,10,0,0" TextWrapping="Wrap" Text="Warning! - All account passwords are stored has a hashed string.&#10;Although it is not plaintext, it is the string that will be sent to Nexon servers!&#10;Please bear in mind the risks and be careful!" VerticalAlignment="Top" Width="436" TextAlignment="Center" Foreground="#FFF77878"/>
         <Label x:Name="label" Content="Username:" HorizontalAlignment="Left" Height="28" Margin="84,76,0,0" VerticalAlignment="Top" Width="77" Foreground="White" HorizontalContentAlignment="Right"/>
         <Label x:Name="label1" Content="Password:" HorizontalAlignment="Left" Height="32" Margin="84,104,0,0" VerticalAlignment="Top" Width="77" Foreground="White" HorizontalContentAlignment="Right"/>
         <TextBox x:Name="usernameTextBox" HorizontalAlignment="Left" Height="20" Margin="166,81,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="183" Background="#7FFFFFFF" TabIndex="0"/>
         <PasswordBox x:Name="passwordPasswordBox" HorizontalAlignment="Left" Height="19" Margin="166,109,0,0" VerticalAlignment="Top" Width="183" Background="#7FFFFFFF" TabIndex="1"/>
+        <Label x:Name="label1_Copy" Content="(optional) Friendly name:" HorizontalAlignment="Left" Height="32" Margin="16,132,0,0" VerticalAlignment="Top" Width="146" Foreground="White" HorizontalContentAlignment="Right"/>
+        <TextBox x:Name="friendlyNameTextBox" HorizontalAlignment="Left" Height="20" Margin="166,136,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="183" Background="#7FFFFFFF" TabIndex="2"/>
     </Grid>
 </Window>

@@ -13,7 +13,7 @@
         <Button x:Name="removeButton" Content="-" HorizontalAlignment="Left" Height="22" Margin="311,62,0,0" VerticalAlignment="Top" Width="24" Click="removeButton_Click"/>
         <Button x:Name="editButton" Content="E" HorizontalAlignment="Left" Height="22" Margin="340,62,0,0" VerticalAlignment="Top" Width="24" Click="editButton_Click"/>
         <Button x:Name="goButton" Content="Select" HorizontalAlignment="Left" Height="30" Margin="155,232,0,0" VerticalAlignment="Top" Width="105" IsDefault="True" Click="goButton_Click"/>
-        <ListBox x:Name="listBox" HorizontalAlignment="Left" Height="132" Margin="39,89,0,0" VerticalAlignment="Top" Width="325" DisplayMemberPath="Username" />
+        <ListBox x:Name="listBox" HorizontalAlignment="Left" Height="132" Margin="39,89,0,0" VerticalAlignment="Top" Width="325" DisplayMemberPath="DisplayName" />
         <CheckBox x:Name="startupCheckBox" Content="Open Xenon Account Manager on startup" HorizontalAlignment="Left" Height="15" Margin="5,281,0,0" VerticalAlignment="Top" Width="313" Foreground="White" Unchecked="startupCheckBox_Toggled" Checked="startupCheckBox_Toggled"/>
         <Label x:Name="tutorialLabel" Content="No accounts have been saved to Xenon.&#10;Click the '+' button above to begin!" HorizontalAlignment="Left" Height="45" Margin="39,89,0,0" VerticalAlignment="Top" Width="231" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
     </Grid>

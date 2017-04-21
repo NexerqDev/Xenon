@@ -13,6 +13,7 @@ namespace Xenon.Accounts
     {
         private string _username;
         private string _password;
+        private string _friendlyName = null;
 
         [JsonProperty("username")]
         public string Username
@@ -36,13 +37,31 @@ namespace Xenon.Accounts
             }
         }
 
-        public Account(string username, string password, bool passwordAlreadyHashed = false)
+        [JsonProperty("friendly_name", NullValueHandling = NullValueHandling.Ignore)]
+        public string FriendlyName
+        {
+            get { return _friendlyName; }
+            set
+            {
+                _friendlyName = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        // used for WPF display
+        [JsonIgnore]
+        public string DisplayName
+            => (_friendlyName != null) ? _friendlyName : _username;
+
+        public Account(string username, string password, string friendlyName = null, bool passwordAlreadyHashed = false)
         {
             this.Username = username;
             this.Password =
                 passwordAlreadyHashed
                     ? password
                     : Nexon.Auth.HashHexPassword(password);
+
+            this.FriendlyName = friendlyName;
         }
 
         // notifyproperty stuff - https://msdn.microsoft.com/en-us/library/ms229614(v=vs.110).aspx

@@ -1,16 +1,22 @@
 # Xenon
 
-A sort-of replacement for GameLauncher.exe. (GMS MapleStory)
+A C#-based MapleStory (GMS) launcher that allows for convenience and quick account switching.
+
+Can be used as a sort-of replacement for GameLauncher.exe (not patching though).
+
+
+![](http://i.imgur.com/XRF6e3f.png)
 
 
 ## Features
 
-* Account switching without messing with Nexon Launcher.
+* Log in without messing with Nexon Launcher.
+* Save account credentials for even quicker account switching.
 
 
 ## Caveats
 
-* Cannot patch the game at the moment (highly doubt this will be implemented, just too much work - go use Nexon Launcher tbh. Xenon really is designed to be used to just quickly switch accounts like last time)
+* Cannot patch the game at the moment (highly doubt this will be implemented, just too much work - go use Nexon Launcher tbh. Xenon really is designed to be used to just quickly switch accounts like last time.)
 
 
 ## Please note

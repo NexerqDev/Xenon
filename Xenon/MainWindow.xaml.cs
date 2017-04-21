@@ -11,12 +11,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.IO;
-using System.Net.Http;
-using System.Net;
-using Newtonsoft.Json.Linq;
-using System.Diagnostics;
-using System.Text.RegularExpressions;
 
 namespace Xenon
 {
@@ -25,35 +19,11 @@ namespace Xenon
     /// </summary>
     public partial class MainWindow : Window
     {
-        public static string AppDirectory = Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "appdata");
-        public static string MaplePath = Path.Combine(AppDirectory, "MapleStory.exe");
-
-        private HttpClient httpClient;
-        private CookieContainer cookieContainer = new CookieContainer();
-
-        private string nexonToken;
-        private string mapleLaunchToken;
-
         public MainWindow()
         {
             InitializeComponent();
-#if DEBUG
-            // for debugging - dont have to move to the folder or w/e
-            AppDirectory = Microsoft.Win32.RegistryKey
-                .OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, Microsoft.Win32.RegistryView.Registry32)
-                .OpenSubKey(@"SOFTWARE\Wizet\MapleStory", false)
-                .GetValue("ExecPath").ToString();
-            MaplePath = Path.Combine(AppDirectory, "MapleStory.exe");
-#endif
 
             checkIfMapleExists();
-
-            var httpHandler = new HttpClientHandler()
-            {
-                CookieContainer = cookieContainer,
-                UseCookies = true
-            };
-            httpClient = new HttpClient(httpHandler);
 
             if (!String.IsNullOrEmpty(Properties.Settings.Default.username))
             {
@@ -69,36 +39,36 @@ namespace Xenon
 
         private void checkIfMapleExists()
         {
-            if (!File.Exists(MaplePath))
+            if (!Nexon.Maple.GameExists())
             {
                 MessageBox.Show("MapleStory.exe was not found. Are you sure you put Xenon into the MapleStory folder? Ensure it is NOT in the \"appdata\" folder that Nexon Launcher creates, but one step above that (by default it should be called \"maplestory\".", "Xenon", MessageBoxButton.OK, MessageBoxImage.Warning);
                 Close();
             }
         }
 
-        private bool supressErrorPop = false;
-        private async void Button_Click(object sender, RoutedEventArgs e)
+        private void Button_Click(object sender, RoutedEventArgs e)
+            => performLogin();
+
+        private async void performLogin()
         {
             usernameTextBox.IsEnabled = false;
             passwordPasswordBox.IsEnabled = false;
             playButton.IsEnabled = false;
 
-#if !DEBUG
             try
             {
-#endif
                 statusLabel.Content = $"attempting login...";
 
-                await performLogin(usernameTextBox.Text, passwordPasswordBox.Password);
+                await Nexon.Auth.Login(usernameTextBox.Text, passwordPasswordBox.Password);
                 statusLabel.Content = $"logged in as {usernameTextBox.Text} - checking for updates...";
 
-                await isMapleUpToDate();
+                await Nexon.Maple.CheckMapleUpToDate();
                 statusLabel.Content = $"maple seems to be up to date - getting launch data...";
 
-                await getLaunchData();
+                await Nexon.Maple.GetLaunchData();
                 statusLabel.Content = $"got maple launch data - launching game!...";
 
-                launchGame();
+                Nexon.Maple.launchGame();
                 statusLabel.Content = $"game launched! - thanks for using xenon!";
 
                 if ((bool)rememberUsernameCheckbox.IsChecked)
@@ -110,15 +80,12 @@ namespace Xenon
 
                 await Task.Delay(1500);
                 Close();
+            }
+            catch (Nexon.NexonError ex) { MessageBox.Show($"Nexon error: \n\n{ex.Message}", "Xenon", MessageBoxButton.OK, MessageBoxImage.Exclamation); }
+            catch (SilentException) { /* meh */ }
 #if !DEBUG
-            }
-            catch (Exception ex)
-            {
-                if (!supressErrorPop)
-                    MessageBox.Show($"An error occurred...\n\n{ex.ToString()}", "Xenon", MessageBoxButton.OK, MessageBoxImage.Asterisk);
-
-                supressErrorPop = false;
-            }
+            catch (Exception ex) { MessageBox.Show($"An error occurred...\n\n{ex.ToString()}", "Xenon", MessageBoxButton.OK, MessageBoxImage.Exclamation); }
+#endif
             finally
             {
                 statusLabel.Content = "";
@@ -126,158 +93,6 @@ namespace Xenon
                 passwordPasswordBox.IsEnabled = true;
                 playButton.IsEnabled = true;
             }
-#endif
-        }
-
-        private async Task performLogin(string username, string password)
-        {
-            var req = new HttpRequestMessage()
-            {
-                RequestUri = new Uri("https://accounts.nexon.net/account/login/launcher"),
-                Method = HttpMethod.Post,
-                Content = new StringContent($"{{\"id\":\"{username}\",\"password\":\"{Nexon.Auth.HashHexPassword(password)}\",\"auto_login\":false,\"client_id\":\"{Nexon.Auth.CLIENT_ID}\",\"scope\":\"{Nexon.Auth.SCOPE}\",\"device_id\":\"{Nexon.Auth.DeviceId}\"}}", Encoding.UTF8, "application/json")
-            };
-            req.Headers.Add("User-Agent", "NexonLauncher node-webkit/0.14.6 (Windows NT 10.0; WOW64) WebKit/537.36 (@c26c0312e940221c424c2730ef72be2c69ac1b67) nexon_client");
-
-            HttpResponseMessage res = await httpClient.SendAsync(req);
-            dynamic json = await parseResponseJson(res);
-
-            nexonToken = json["access_token"];
-            cookieContainer.Add(new Cookie("nxtk", nexonToken, "/", ".nexon.net")); // this cookie is used in all future requests
-        }
-
-        private Regex remoteVerRegex = new Regex(@"pub(\d+)_(\d+)_(\d+)\.manifest");
-        private async Task isMapleUpToDate()
-        {
-            // minor: 184, build: 2, private: 0 ==> v184.2.0 maple.
-            FileVersionInfo localVerData = FileVersionInfo.GetVersionInfo(MaplePath);
-            string localVer = $"{localVerData.ProductMinorPart}.{localVerData.ProductBuildPart}.{localVerData.ProductPrivatePart}";
-
-            // get remote version. if fail, well just prompt to continue or not.
-            string remoteVer;
-            try
-            {
-                var req = new HttpRequestMessage()
-                {
-                    RequestUri = new Uri("https://api.nexon.io/products/10100"),
-                    Method = HttpMethod.Get
-                };
-                addNexonLauncherData(req); // bearer auth + UA
-
-                HttpResponseMessage res = await httpClient.SendAsync(req);
-                dynamic json = await parseResponseJson(res);
-
-                // parse version
-                string remoteData = json["product_details"]["branches"]["win32"]["public"];
-                Match remoteVerData = remoteVerRegex.Match(remoteData);
-                remoteVer = $"{remoteVerData.Groups[1].Value}.{remoteVerData.Groups[2].Value}.{remoteVerData.Groups[3].Value}";
-            }
-            catch (Exception e)
-            {
-                MessageBoxResult mbr = MessageBox.Show($"Couldn't get latest MapleStory version data. Error:\n\n{e.ToString()}\n\nContinue anyway?", "Xenon", MessageBoxButton.YesNo);
-                if (mbr == MessageBoxResult.No)
-                    returnNoError();
-
-                return;
-            }
-
-            if (localVer != remoteVer)
-            {
-                MessageBox.Show($"Your copy of MapleStory does not seem to be up to date. (You have {localVer}, and the latest seems to be {remoteVer}. Please use Nexon Launcher to update MapleStory to the latest version before continuing.", "Xenon");
-                returnNoError();
-            }
-        }
-
-        private Regex errorRegex = new Regex(@"name=""ErrorCode"" value=""(\d+)""\/>.*name=""ErrorMessage"" value=""(.*?)""\/>");
-        private Regex tokenRegex = new Regex(@"name=""NewPassport"" value=""(.*?)""\/>");
-        private Regex authServerRegex = new Regex(@":auth(\d+):");
-        private async Task getLaunchData()
-        {
-            // getting passport cookie to be able to get the launch token
-            var req = new HttpRequestMessage()
-            {
-                RequestUri = new Uri("https://api.nexon.io/users/me/passport"),
-                Method = HttpMethod.Get
-            };
-            addNexonLauncherData(req);
-
-            HttpResponseMessage res = await httpClient.SendAsync(req);
-            dynamic json = await parseResponseJson(res);
-            string passportToken = json["passport"];
-
-
-            // getting final launch token.
-            // now it JUST uses cookies.
-            string authServerNum = authServerRegex.Match(passportToken).Groups[1].Value;
-            req = new HttpRequestMessage()
-            {
-                RequestUri = new Uri($"http://auth{authServerNum}.nexon.net/ajax/default.aspx?_vb=UpdateSession"),
-                Method = HttpMethod.Post,
-                Content = new StringContent("", Encoding.UTF8, "application/x-www-form-urlencoded")
-            };
-            req.Headers.Add("User-Agent", "Python-urllib/2.7"); // and now it uses some python launch? idfk nexon.
-            req.Headers.Add("Cookie", "NPPv2=" + passportToken); // we will handle cookies here seperately, almost like how they use another python launch.
-
-            using (var client = new HttpClient(new HttpClientHandler() { UseCookies = false }))
-                res = await client.SendAsync(req);
-
-            // ... and it uses xml, not json.
-            string xml = await res.Content.ReadAsStringAsync();
-
-            Match errorReg = errorRegex.Match(xml);
-            if (errorReg.Success)
-            {
-                string errorCode = errorReg.Groups[1].Value;
-                string errorMsg = errorReg.Groups[2].Value;
-
-                if (errorCode != "0" || !String.IsNullOrEmpty(errorMsg))
-                    throw new Exception($"Nexon launch token error: \n\n{errorMsg} [{errorCode}]");
-            }
-
-            Match tokenReg = tokenRegex.Match(xml);
-            if (!tokenReg.Success)
-                throw new Exception("Could not get launch token!");
-
-            mapleLaunchToken = tokenReg.Groups[1].Value;
-        }
-
-        private void launchGame()
-        {
-            ProcessStartInfo startInfo = new ProcessStartInfo()
-            {
-                FileName = MaplePath,
-                Arguments = $"WebStart {mapleLaunchToken}",
-                WorkingDirectory = AppDirectory,
-                UseShellExecute = !App.CompatFlag
-            };
-
-            Process.Start(startInfo);
-        }
-
-        private async Task<dynamic> parseResponseJson(HttpResponseMessage res)
-        {
-            // include err checking here
-            dynamic json = JObject.Parse(await res.Content.ReadAsStringAsync());
-
-            if (!res.IsSuccessStatusCode)
-                throw new Exception($"Nexon {res.StatusCode} error: \n\n{json["message"]} [{json["code"]}]");
-
-            if (json["error"] != null)
-                throw new Exception($"Nexon error: \n\n{json["error"]["message"]} [{json["error"]["code"]}]");
-
-            return json;
-        }
-
-        private void addNexonLauncherData(HttpRequestMessage req)
-        {
-            req.Headers.Add("User-Agent", "NexonLauncher.nxl-17.03.02-275-220ecfb");
-            req.Headers.Add("Authorization", "bearer " + Util.EncodeB64(nexonToken)); // this + cookie is used for auth here.
-        }
-
-        private void returnNoError()
-        {
-            supressErrorPop = true;
-            throw new Exception();
         }
     }
 }

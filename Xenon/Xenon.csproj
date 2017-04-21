@@ -62,6 +62,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Nexon\Auth.cs" />
+    <Compile Include="Nexon\Maple.cs" />
+    <Compile Include="Nexon\NexonError.cs" />
+    <Compile Include="SilentException.cs" />
     <Compile Include="Util.cs" />
     <Page Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>

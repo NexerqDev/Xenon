@@ -60,13 +60,13 @@ namespace Xenon.Nexon
             return sb.ToString();
         }
 
-        public static async Task Login(string username, string password)
+        public static async Task Login(Accounts.Account account)
         {
             var req = new HttpRequestMessage()
             {
                 RequestUri = new Uri("https://accounts.nexon.net/account/login/launcher"),
                 Method = HttpMethod.Post,
-                Content = new StringContent($"{{\"id\":\"{username}\",\"password\":\"{HashHexPassword(password)}\",\"auto_login\":false,\"client_id\":\"{CLIENT_ID}\",\"scope\":\"{SCOPE}\",\"device_id\":\"{DeviceId}\"}}", Encoding.UTF8, "application/json")
+                Content = new StringContent($"{{\"id\":\"{account.Username}\",\"password\":\"{account.Password}\",\"auto_login\":false,\"client_id\":\"{CLIENT_ID}\",\"scope\":\"{SCOPE}\",\"device_id\":\"{DeviceId}\"}}", Encoding.UTF8, "application/json")
             };
             req.Headers.Add("User-Agent", "NexonLauncher node-webkit/0.14.6 (Windows NT 10.0; WOW64) WebKit/537.36 (@c26c0312e940221c424c2730ef72be2c69ac1b67) nexon_client");
 

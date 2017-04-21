@@ -22,7 +22,7 @@ namespace Xenon
         public MainWindow()
         {
             InitializeComponent();
-
+            
             checkIfMapleExists();
 
             if (!String.IsNullOrEmpty(Properties.Settings.Default.username))
@@ -37,6 +37,12 @@ namespace Xenon
             }
         }
 
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (Properties.Settings.Default.showAccountManager)
+                (new Accounts.Manager(this)).ShowDialog();
+        }
+
         private void checkIfMapleExists()
         {
             if (!Nexon.Maple.GameExists())
@@ -47,20 +53,25 @@ namespace Xenon
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
-            => performLogin();
+            => PerformLogin();
 
-        private async void performLogin()
+        public async void PerformLogin(Accounts.Account _account = null)
         {
             usernameTextBox.IsEnabled = false;
             passwordPasswordBox.IsEnabled = false;
             playButton.IsEnabled = false;
 
+            Accounts.Account account =
+                (_account != null)
+                    ? _account
+                    : new Accounts.Account(usernameTextBox.Text, passwordPasswordBox.Password);
+
             try
             {
                 statusLabel.Content = $"attempting login...";
 
-                await Nexon.Auth.Login(usernameTextBox.Text, passwordPasswordBox.Password);
-                statusLabel.Content = $"logged in as {usernameTextBox.Text} - checking for updates...";
+                await Nexon.Auth.Login(account);
+                statusLabel.Content = $"logged in as {account.Username} - checking for updates...";
 
                 await Nexon.Maple.CheckMapleUpToDate();
                 statusLabel.Content = $"maple seems to be up to date - getting launch data...";
@@ -72,7 +83,7 @@ namespace Xenon
                 statusLabel.Content = $"game launched! - thanks for using xenon!";
 
                 if ((bool)rememberUsernameCheckbox.IsChecked)
-                    Properties.Settings.Default.username = usernameTextBox.Text;
+                    Properties.Settings.Default.username = account.Username;
                 else
                     Properties.Settings.Default.username = "";
 
@@ -94,5 +105,8 @@ namespace Xenon
                 playButton.IsEnabled = true;
             }
         }
+
+        private void accountsManagerButton_Click(object sender, RoutedEventArgs e)
+            => (new Accounts.Manager(this)).ShowDialog();
     }
 }

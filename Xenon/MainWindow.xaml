@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Xenon"
         mc:Ignorable="d"
-        Title="Xenon" Height="248.798" Width="540.001" ResizeMode="NoResize" Icon="xenon.ico" Background="#C64E4E4E">
+        Title="Xenon" Height="248.798" Width="540.001" ResizeMode="NoResize" Icon="xenon.ico" Background="#C64E4E4E" Loaded="Window_Loaded">
     <Grid Margin="0,0,0,1">
         <Image x:Name="bgImage" HorizontalAlignment="Center" Height="217" VerticalAlignment="Center" Width="697" Source="Resources/cropped-maplestory-unlimited-xenon.jpg" Cursor="None" Opacity="0.15" Stretch="UniformToFill" Margin="-123,2,-40,0">
             <Image.Effect>
@@ -25,6 +25,7 @@
         </Grid>
         <Label x:Name="statusLabel" Content="" HorizontalAlignment="Left" Height="29" Margin="0,190,0,0" VerticalAlignment="Center" Width="532" HorizontalContentAlignment="Center" Foreground="White"/>
         <Image HorizontalAlignment="Left" Height="29" Margin="250,27,0,0" VerticalAlignment="Top" Width="26" Source="xenon.ico" RenderTransformOrigin="0.961,0.79"/>
+        <Button x:Name="accountsManagerButton" Content="Accounts" HorizontalAlignment="Left" Height="23" Margin="421,10,0,0" VerticalAlignment="Top" Width="94" Click="accountsManagerButton_Click"/>
 
     </Grid>
 </Window>

@@ -46,5 +46,29 @@ namespace Xenon.Properties {
                 this["nexonDeviceId"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool showAccountManager {
+            get {
+                return ((bool)(this["showAccountManager"]));
+            }
+            set {
+                this["showAccountManager"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("[]")]
+        public string savedAccounts {
+            get {
+                return ((string)(this["savedAccounts"]));
+            }
+            set {
+                this["savedAccounts"] = value;
+            }
+        }
     }
 }

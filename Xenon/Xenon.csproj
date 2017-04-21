@@ -61,11 +61,26 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Accounts\Account.cs" />
+    <Compile Include="Accounts\AccountEditor.xaml.cs">
+      <DependentUpon>AccountEditor.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Accounts\Manager.xaml.cs">
+      <DependentUpon>Manager.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Nexon\Auth.cs" />
     <Compile Include="Nexon\Maple.cs" />
     <Compile Include="Nexon\NexonError.cs" />
     <Compile Include="SilentException.cs" />
     <Compile Include="Util.cs" />
+    <Page Include="Accounts\AccountEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Accounts\Manager.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

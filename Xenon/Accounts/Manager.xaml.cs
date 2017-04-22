@@ -124,7 +124,23 @@ namespace Xenon.Accounts
             }
 
             var account = (Account)listBox.SelectedItem;
+            go(account);
+        }
 
+        private void listBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (accounts.Count > 0)
+            {
+                var account = (Account)listBox.SelectedItem;
+                if (account == null)
+                    return;
+
+                go(account);
+            }
+        }
+
+        private void go(Account account)
+        {
             _mw.usernameTextBox.Text = account.Username;
             _mw.PerformLogin(account);
             Close();

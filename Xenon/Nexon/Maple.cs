@@ -23,7 +23,7 @@ namespace Xenon.Nexon
 
         private static string launchToken;
 
-        private static Regex remoteVerRegex = new Regex(@"pub(\d+)_(\d+)_(\d+)\.manifest");
+        private static Regex remoteVerRegex = new Regex(@"pub(\d+)_(\d+)_(\d+)");
         public static async Task CheckMapleUpToDate()
         {
             string localVer = getLocalMapleVersion();

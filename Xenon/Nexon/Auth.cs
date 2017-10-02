@@ -69,6 +69,7 @@ namespace Xenon.Nexon
                 Content = new StringContent($"{{\"id\":\"{account.Username}\",\"password\":\"{account.Token}\",\"auto_login\":false,\"client_id\":\"{CLIENT_ID}\",\"scope\":\"{SCOPE}\",\"device_id\":\"{DeviceId}\"}}", Encoding.UTF8, "application/json")
             };
             req.Headers.Add("User-Agent", "NexonLauncher node-webkit/0.14.6 (Windows NT 10.0; WOW64) WebKit/537.36 (@c26c0312e940221c424c2730ef72be2c69ac1b67) nexon_client");
+            req.Headers.Add("Origin", "chrome-extension://dobbaijafcbikgimjpakclacfgeagffm");
 
             HttpResponseMessage res = await Client.SendAsync(req);
             dynamic json = await ParseResponseJson(res);

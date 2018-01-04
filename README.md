@@ -1,5 +1,7 @@
 # Xenon
 
+**NOTE: This program is not as actively maintained as it used to be! I am not particularly active on GMS anymore, thus I do not use this program myself regularly anymore. This is not to say it will not still work, however, but rather use it expecting that something may break! If something does break, don't hesitate to submit an issue here on GitHub and I'll be more than happy to try look into it and fix it!**
+
 A C#-based MapleStory (GMS) launcher that allows for convenience and quick account switching.
 
 Can be used as a sort-of replacement for GameLauncher.exe (not patching though).
